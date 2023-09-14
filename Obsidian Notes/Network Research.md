@@ -1,0 +1,13 @@
+The files that have logging implemented in them in the server side of the project are main.c , log.c , and file_transfer.c 
+	- log.c : This file is used to create the function that is called whenever something needs to be logged in the server. What the function is passed is IP address of the source and destination, the blockcount, the bytecount, and the errors variable. It starts out by creating a time_t variable and setting it the calender time and converts it using the gmtime function. Then we format the time variable to print the date in the order: year.month.day.hour.min.sec .We then print out the source IP address and port number and the destination IP address and port number. Finally, we print the blockcount, bytecount, and error count at the end of the log and end it with a newline. We also have the fflush function being called to clear the output buffer at the end of the function.
+	- file_transfer.c : This file is used to actually ship and transfer the file to where it needs to go. The only logging instance in this file is when both of the functions are done running which means that the file was shipped correctly and we get the bytecount and blockcount, and we have the source and destination IP address from the parameters of the run_file_transfer function and get the blocktotal and the bytetotal, we call the log function.
+	- main.c : This file is used to execute the server and make sure that it is running and listening for connections. The logging instance in here is the function fclose() which is making of a log file by creating a char array called logname and it gets filled with the format of: server.yyyy.mm.dd.hh.min.sec .Then it tries to reassign the stream to the logname and if it does not work we print an error messages and return 1. 
+
+The way we can incorporate the new logging code into the server side of the project is making the header file for the logging file and including the file is the following:
+	- the header file of the new logging code would look like:
+				extern char * get_current_time(void);
+				extern void log_network_errors(uint32_t, const struct sockaddr_in * , long long, char*, char*, char*, uchar8*, int );
+				extern log_trace_msg(uint32_t, char const* const)
+				extern log_server_errors(uint32_t, const struct sockaddr_in*, const struct sockaddr_in*, const long long, const long long, const int)
+	- we will replace log.c with our new logging file, logging.c, and replace the header files as well
+	- for file_transfer.c we can replace the function hipftlog(src,dst,blocktotal,bytetotal,errors) with log_server_errors(SERVER_DEBUG, src, dst, blocktotal, bytetotal, errors)
